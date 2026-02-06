@@ -5,43 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ระบบรับฝากขยะรีไซเคิล</title>
 <style>
-body{
-  font-family:sans-serif;
-  margin:0;
-  background:#f2f6f9;
-}
-header{
-  background:#2c7a7b;
-  color:white;
-  padding:15px;
-  text-align:center;
-  font-size:20px;
-}
-.container{
-  padding:15px;
-}
-.card{
-  background:white;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
-  box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background:#2c7a7b;
-  color:white;
-  font-size:16px;
-  margin-top:10px;
-}
-input{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
-}
+body{font-family:sans-serif;margin:0;background:#eef2f5}
+header{background:#2c7a7b;color:white;padding:15px;text-align:center;font-size:20px}
+.container{padding:15px}
+.card{background:white;padding:15px;border-radius:12px;margin-bottom:15px;box-shadow:0 3px 8px rgba(0,0,0,0.1)}
+input{width:100%;padding:8px;margin-top:5px}
+button{width:100%;padding:12px;border:none;border-radius:8px;background:#2c7a7b;color:white;font-size:16px;margin-top:10px}
+#receipt{display:none;white-space:pre-line;background:#fff;padding:15px;border-radius:10px}
 </style>
 </head>
 <body>
@@ -49,6 +19,14 @@ input{
 <header>ระบบรับฝากขยะรีไซเคิล</header>
 
 <div class="container">
+
+<div class="card">
+<h3>ข้อมูลผู้ฝาก</h3>
+ชื่อผู้ฝาก
+<input id="customer">
+จำนวนคนที่มาฝาก
+<input id="people" type="number">
+</div>
 
 <div class="card">
 <h3>เพิ่มรายการขยะ</h3>
@@ -63,19 +41,49 @@ input{
 <h3>รายการที่รับฝาก</h3>
 <ul id="list"></ul>
 <h3>ยอดรวม: <span id="total">0</span> บาท</h3>
+<button onclick="makeReceipt()">ออกใบเสร็จ</button>
+</div>
+
+<div class="card">
+<h3>ใบเสร็จ</h3>
+<div id="receipt"></div>
 </div>
 
 </div>
 
 <script>
+let items=[];
 let total=0;
+
 function addItem(){
  let name=document.getElementById("name").value;
  let weight=parseFloat(document.getElementById("weight").value);
+ if(!name || !weight) return alert("กรอกข้อมูลให้ครบ");
  let price=weight*5;
+ items.push({name,weight,price});
  total+=price;
  document.getElementById("list").innerHTML+=`<li>${name} ${weight} กก. = ${price} บาท</li>`;
  document.getElementById("total").innerText=total;
+}
+
+function makeReceipt(){
+ let customer=document.getElementById("customer").value;
+ let people=document.getElementById("people").value;
+ if(!customer || !people) return alert("กรอกข้อมูลผู้ฝากก่อน");
+
+ let text="ใบเสร็จรับฝากขยะรีไซเคิล\n";
+ text+="ชื่อผู้ฝาก: "+customer+"\n";
+ text+="จำนวนคน: "+people+"\n\nรายการ:\n";
+
+ items.forEach(i=>{
+   text+=`${i.name} ${i.weight} กก. = ${i.price} บาท\n`;
+ });
+
+ text+="\nยอดรวมทั้งหมด: "+total+" บาท";
+
+ let box=document.getElementById("receipt");
+ box.style.display="block";
+ box.innerText=text;
 }
 </script>
 
